@@ -1,101 +1,133 @@
-import Image from "next/image";
+"use client";
+import Bargraph from '@/components/bargraph'
+import { useState , useEffect } from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import TransactionList from '@/components/listTransaction';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PieChart from '@/components/pieChart'
 
-export default function Home() {
+
+interface FormData {
+  amount: number;
+  date: string;
+  description: string;
+  category: string;
+}
+
+interface Transaction {
+  amount: number;
+  date: string;
+  description: string;
+  category: string;
+}
+
+const page = () => {
+  const { register, handleSubmit, reset, setValue } = useForm<FormData>();
+  const [loading, setLoading] = useState(false);
+  const [start,setStart] = useState(false)
+  const [refresh, setRefresh] = useState(0);
+  const [data, setData] = useState<Transaction[]>([]);
+  const [forceRender,setForceRender] = useState(0)
+
+  useEffect(()=>{
+      const fetchTransactions = async () => {
+        try {
+          const response = await axios.get("/api/transaction/currentYearTransactions");
+          setData(response.data.transactions)
+          setStart(true)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      fetchTransactions()
+  },[refresh])
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      setLoading(true);
+      await axios.post("/api/transaction/add", data);
+      toast.success("Transaction added successfully!");
+      setRefresh(prev => prev + 1);
+      reset();
+      setForceRender(prev=>prev+1)
+    } catch (error) {
+      toast.error("Failed to add transaction");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if(start)
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className='w-full min-h-screen'>
+      <div className='flex mt-8 flex-col md:flex-row w-full items-center justify-center'>
+        <span className='md:w-[50%] mt-16'><Bargraph transactions={data}/></span>
+        <span className='md:w-[50%] mt-16'><PieChart date={String(new Date().getFullYear())} transactions={data}/></span>
+      </div>
+      <TransactionList update={setRefresh}/>
+      <Card className="p-4 mx-4 mb-4">
+        <CardHeader>
+          <CardTitle>Add Transaction</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                min={0}
+                max={10000000}
+                className='mt-3'
+                placeholder="Enter amount"
+                {...register("amount", { required: true, valueAsNumber: true })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="date">Date</Label>
+              <Input className='mt-3' id="date" type="date" {...register("date", { required: true })} />
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Input className='mt-3' id="description" placeholder="Enter description" maxLength={25} {...register("description", { required: true })} />
+            </div>
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Select key={forceRender} onValueChange={(value) => setValue("category", value)}>
+                <SelectTrigger className="mt-3">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Food">Food</SelectItem>
+                  <SelectItem value="Transport">Transport</SelectItem>
+                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  <SelectItem value="Shopping">Shopping</SelectItem>
+                  <SelectItem value="Rent">Rent</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" disabled={loading}>
+              {loading ? <div className="w-6 h-6 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div> : "Add Transaction"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+  else
+    return(
+      <div className="min-h-screen mt-16 flex items-center justify-center">
+        <div className="w-6 h-6 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    )
+};
+
+export default page;
