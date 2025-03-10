@@ -159,6 +159,8 @@ export default function TransactionModal(props: any) {
                 <label className="block text-sm font-medium">Amount</label>
                 <Input
                   type="number"
+                  min={0}
+                  max={10000000}
                   value={editingTx.amount}
                   onChange={(e) =>
                     setEditingTx((prev) => prev && { ...prev, amount: Number(e.target.value) })
