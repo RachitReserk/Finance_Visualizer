@@ -90,7 +90,7 @@ export default function TransactionModal(props: any) {
         <DialogTrigger asChild>
           <Button variant="default">View Transactions</Button>
         </DialogTrigger>
-        <DialogContent className="md:w-auto w-[340px] max-h-[500px] overflow-y-auto">
+        <DialogContent className="min-w-full md:w-auto w-[440px] max-h-[500px] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Transaction List</DialogTitle>
           </DialogHeader>
@@ -182,6 +182,7 @@ export default function TransactionModal(props: any) {
                 <Input
                   type="text"
                   value={editingTx.description}
+                  maxLength={25} 
                   onChange={(e) =>
                     setEditingTx((prev) => prev && { ...prev, description: e.target.value })
                   }
