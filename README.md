@@ -1,21 +1,26 @@
-A Personal Finance Visualizer web application built with Next.js, React, shadcn/ui, Recharts, and MongoDB. The app allows users to track transactions, analyze spending patterns, and manage budgets effectively.
+# 💰 Personal Finance Visualizer
 
-All 3 stages combined.
+A **Personal Finance Visualizer** web application built with **Next.js, React, shadcn/ui, Recharts, and MongoDB**.  
+The app allows users to **track transactions, analyze spending patterns, and manage budgets effectively**.
 
-Clone,
-Install dependencies,
-Set up env and initialize MONGODB_URI
+## 🚀 Features
+- 📊 **Dashboard Overview** – Yearly & monthly expenses, recent transactions, and a pie chart of monthly expenses.  
+- 📈 **Monthly Expense Trends** – A **line chart showing monthly expenses within the year** for better financial insights.  
+- 💸 **Transaction Management** – Add, modify, and delete transactions seamlessly.  
+- 🎯 **Budget Planning** – Set and modify budgets to track expenses efficiently.  
+- 📉 **Spending Insights** – View total budget, amount spent, savings, top spending category, and overspending alerts.  
+- 📊 **Data Visualization** – Pie chart for category-wise spending and a **bar graph comparing expenses vs. budget** for current month.  
 
-The homepage displays the monthly expenses for the entire year along with a pie chart. It also includes features to view transactions, add, modify, and delete them.
+## 🛠️ Tech Stack
+- **Frontend**: Next.js, React, shadcn/ui, Tailwind CSS  
+- **Backend**: Next.js API Routes (App Router), MongoDB (Mongoose)  
+- **Charts & Graphs**: Recharts  
 
-The dashboard displays the expenses for the year and month, recent transactions, and a pie chart showing the current month's expenses.
+## 🔧 Getting Started
 
-The Budget tab allows users to set a budget for specific months of the year, which can also be modified.
-The Spending Insights section provides an overview of the total budget, the amount spent this month, total savings, the top spending category, and categories that have exceeded the budget.
-There is also a bar graph that displays the difference between expenses and the current budget.
+### 1️⃣ Clone the Repository
+1.Clone the repo
+2.Install dependencies
+3.Set up MONGODB_URI in your .env file
 
-
-
-
-
-
+done ;)
